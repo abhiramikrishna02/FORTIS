@@ -26,9 +26,10 @@ const serviceOptions = [
   'Commercial Construction',
   'Interior Design & Fit-Out',
   'Renovation & Refurbishment',
-  'Turnkey Design & Build',
+  'Turnkey Design & Build Solutions',
+  'Real Estate Development',
   'Project Management & Consultancy',
-  'Design Coordination',
+  'Design Coordination & Procurement Management',
   'Other',
 ]
 
@@ -36,7 +37,7 @@ const contactInfo = [
   {
     icon: <MapPin size={22} />,
     label: 'Registered Office',
-    value: 'Total Mall, opposite Madiwala Police Station, Sidharata Colony, Santhosapuram, Koramangala 2nd Block, Koramangala, Bengaluru, Karnataka 560068',
+    value: 'Total Mall, Police Station, opposite to Madiwala, Sidharata Colony, Santhosapuram, Koramangala 2nd Block, Koramangala, Bengaluru, Karnataka 560068',
     link: null,
   },
   {

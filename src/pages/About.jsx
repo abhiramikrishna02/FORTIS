@@ -101,7 +101,8 @@ export default function About() {
             </h1>
             <p className="text-white/60 max-w-xl leading-relaxed">
               A trusted development, construction, interior fit-out, and project management company
-              delivering high-quality projects through engineering excellence and disciplined execution.
+              delivering high-quality projects through engineering excellence, disciplined execution,
+              and long-term value creation.
             </p>
           </motion.div>
         </div>
@@ -146,8 +147,8 @@ export default function About() {
                     style={{ clipPath: 'polygon(100% 0, 0 0, 100% 100%)' }} />
                   <p className="text-sapphire text-xs font-bold tracking-widest uppercase mb-3">Our Mission</p>
                   <p className="text-white font-semibold text-lg leading-relaxed">
-                    To deliver high-quality construction and development projects through innovative &amp;
-                    sustainable practices — executing future-proof layouts with immaculate craftsmanship.
+                    Innovative &amp; Sustainable Architecture — Executing future-proof layouts utilizing
+                    immaculate custom craftsmanship and green architecture processes.
                   </p>
                 </div>
 
@@ -155,8 +156,8 @@ export default function About() {
                 <div className="bg-iceblue p-8 border-l-4 border-sapphire relative overflow-hidden">
                   <p className="text-sapphire text-xs font-bold tracking-widest uppercase mb-3">Our Vision</p>
                   <p className="text-navy font-semibold text-lg leading-relaxed">
-                    To be a globally recognized construction firm setting world-class benchmarks in structural
-                    excellence, timeless safety principles, and investor satisfaction.
+                    Globally Recognized Structural Distinction — Setting world-class benchmarks in luxury
+                    execution, timeless safety principles, and investor satisfaction.
                   </p>
                 </div>
 

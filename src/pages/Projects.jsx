@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import { MapPin, Calendar, Layers, ArrowRight } from 'lucide-react'
+import { MapPin, Calendar, Layers, ArrowRight, ChevronLeft, ChevronRight, X } from 'lucide-react'
 
 /* ─── Animation Helper ───────────────────────────────────────────── */
 function FadeUp({ children, delay = 0, className = '' }) {
@@ -30,7 +30,7 @@ const projects = [
     scope: 'Full Residential Development — 24 units, structural, MEP, and landscape.',
     status: 'Completed',
     year: '2024',
-    color: '#002A6A',
+    images: ['/hero.png', '/img.jpg', '/hero.png'],
   },
   {
     id: 2,
@@ -40,7 +40,7 @@ const projects = [
     scope: 'Ground + 5 commercial office complex, shell & core with MEP infrastructure.',
     status: 'Completed',
     year: '2023',
-    color: '#0F52BA',
+    images: ['/hero.png', '/img.jpg', '/hero.png'],
   },
   {
     id: 3,
@@ -50,7 +50,7 @@ const projects = [
     scope: 'Full interior fit-out — partitions, ceilings, flooring, custom joinery, MEP finishes.',
     status: 'Ongoing',
     year: '2025',
-    color: '#002A6A',
+    images: ['/hero.png', '/img.jpg', '/hero.png'],
   },
   {
     id: 4,
@@ -60,7 +60,7 @@ const projects = [
     scope: 'Premium villa township — 12 independent units with private landscaping.',
     status: 'Completed',
     year: '2023',
-    color: '#0F52BA',
+    images: ['/hero.png', '/img.jpg', '/hero.png'],
   },
   {
     id: 5,
@@ -70,7 +70,7 @@ const projects = [
     scope: 'Boutique hotel construction and complete interior fit-out, 48 rooms.',
     status: 'Completed',
     year: '2022',
-    color: '#002A6A',
+    images: ['/hero.png', '/img.jpg', '/hero.png'],
   },
   {
     id: 6,
@@ -80,7 +80,7 @@ const projects = [
     scope: 'Retail and F&B plaza, three floors, shell and fit-out.',
     status: 'Ongoing',
     year: '2025',
-    color: '#0F52BA',
+    images: ['/hero.png', '/img.jpg', '/hero.png'],
   },
   {
     id: 7,
@@ -90,7 +90,7 @@ const projects = [
     scope: 'Full refurbishment of existing 18-unit residential complex.',
     status: 'Completed',
     year: '2022',
-    color: '#002A6A',
+    images: ['/hero.png', '/img.jpg', '/hero.png'],
   },
   {
     id: 8,
@@ -100,7 +100,7 @@ const projects = [
     scope: '28,000 sq ft open-plan office interior fit-out, Tier 1 finish standard.',
     status: 'Ongoing',
     year: '2025',
-    color: '#0F52BA',
+    images: ['/hero.png', '/img.jpg', '/hero.png'],
   },
   {
     id: 9,
@@ -110,15 +110,163 @@ const projects = [
     scope: 'G+6 residential block, 36 units — turnkey design & build.',
     status: 'Ongoing',
     year: '2025',
-    color: '#002A6A',
+    images: ['/hero.png', '/img.jpg', '/hero.png'],
   },
 ]
 
 const categories = ['All', 'Residential', 'Commercial', 'Hospitality', 'Interior Fit-Out', 'Renovation', 'Ongoing']
 
-/* ─── Component ─────────────────────────────────────────────────── */
+/* ─── Image Carousel (card) ─────────────────────────────────────── */
+function CardCarousel({ images, onImageClick }) {
+  const [current, setCurrent] = useState(0)
+
+  const prev = (e) => {
+    e.stopPropagation()
+    setCurrent((c) => (c - 1 + images.length) % images.length)
+  }
+  const next = (e) => {
+    e.stopPropagation()
+    setCurrent((c) => (c + 1) % images.length)
+  }
+
+  return (
+    <div
+      className="relative h-52 overflow-hidden cursor-pointer group/carousel"
+      onClick={() => onImageClick(current)}
+    >
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={current}
+          src={images[current]}
+          alt=""
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="w-full h-full object-cover"
+        />
+      </AnimatePresence>
+
+      {/* Arrows */}
+      <button
+        onClick={prev}
+        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 opacity-0 group-hover/carousel:opacity-100 transition-opacity z-10"
+      >
+        <ChevronLeft size={18} />
+      </button>
+      <button
+        onClick={next}
+        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 opacity-0 group-hover/carousel:opacity-100 transition-opacity z-10"
+      >
+        <ChevronRight size={18} />
+      </button>
+
+      {/* Dots */}
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+        {images.map((_, i) => (
+          <button
+            key={i}
+            onClick={(e) => { e.stopPropagation(); setCurrent(i) }}
+            className={`h-1.5 rounded-full transition-all ${i === current ? 'bg-white w-3' : 'bg-white/50 w-1.5'}`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/* ─── Lightbox ──────────────────────────────────────────────────── */
+function Lightbox({ images, startIndex, onClose }) {
+  const [current, setCurrent] = useState(startIndex)
+
+  const prev = () => setCurrent((c) => (c - 1 + images.length) % images.length)
+  const next = () => setCurrent((c) => (c + 1) % images.length)
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    const handler = (e) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowLeft') prev()
+      if (e.key === 'ArrowRight') next()
+    }
+    window.addEventListener('keydown', handler)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', handler)
+    }
+  }, [current])
+
+  return (
+    <div
+      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/90"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-4xl mx-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute -top-12 right-0 text-white/70 hover:text-white transition-colors z-10"
+        >
+          <X size={32} />
+        </button>
+
+        {/* Image */}
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={current}
+            src={images[current]}
+            alt=""
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ duration: 0.25 }}
+            className="w-full max-h-[78vh] object-contain rounded-lg"
+          />
+        </AnimatePresence>
+
+        {/* Prev button */}
+        <button
+          onClick={prev}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-14 bg-white/15 hover:bg-white/30 text-white rounded-full p-3 transition-colors"
+        >
+          <ChevronLeft size={26} />
+        </button>
+
+        {/* Next button */}
+        <button
+          onClick={next}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-14 bg-white/15 hover:bg-white/30 text-white rounded-full p-3 transition-colors"
+        >
+          <ChevronRight size={26} />
+        </button>
+
+        {/* Counter + dots */}
+        <div className="flex flex-col items-center gap-2 mt-4">
+          <div className="flex gap-2">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrent(i)}
+                className={`h-1.5 rounded-full transition-all ${i === current ? 'bg-white w-6' : 'bg-white/40 w-1.5'}`}
+              />
+            ))}
+          </div>
+          <p className="text-white/40 text-xs tracking-widest">
+            {current + 1} / {images.length}
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ─── Main Component ─────────────────────────────────────────────── */
 export default function Projects() {
   const [activeFilter, setActiveFilter] = useState('All')
+  const [lightbox, setLightbox] = useState(null)
 
   const filtered = projects.filter((p) => {
     if (activeFilter === 'All') return true
@@ -174,10 +322,7 @@ export default function Projects() {
                 key={cat}
                 onClick={() => setActiveFilter(cat)}
                 className={`shrink-0 text-xs font-semibold tracking-widest uppercase px-5 py-2.5 transition-all duration-200
-                  ${activeFilter === cat
-                    ? 'bg-navy text-white'
-                    : 'text-navy hover:bg-iceblue'
-                  }`}
+                  ${activeFilter === cat ? 'bg-navy text-white' : 'text-navy hover:bg-iceblue'}`}
               >
                 {cat}
               </button>
@@ -206,45 +351,21 @@ export default function Projects() {
                   transition={{ duration: 0.5, delay: i * 0.08 }}
                   className="bg-white group card-hover border border-iceblue-dark/30 overflow-hidden"
                 >
-                  {/* Visual Header */}
-                  <div
-                    className="h-52 relative overflow-hidden"
-                    style={{ backgroundColor: project.color }}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-black/10 to-transparent" />
-                    {/* Grid overlay */}
-                    <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 400 250">
-                      <defs>
-                        <pattern id={`g-${project.id}`} x="0" y="0" width="25" height="25" patternUnits="userSpaceOnUse">
-                          <path d="M 25 0 L 0 0 0 25" fill="none" stroke="white" strokeWidth="0.5"/>
-                        </pattern>
-                      </defs>
-                      <rect width="100%" height="100%" fill={`url(#g-${project.id})`} />
-                    </svg>
-                    {/* Building icon */}
-                    <div className="absolute bottom-0 left-0 right-0 flex justify-center opacity-15">
-                      <svg viewBox="0 0 360 120" className="w-3/4" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="10" y="20" width="70" height="100" fill="white" />
-                        <rect x="90" y="0" width="90" height="120" fill="white" />
-                        <rect x="190" y="35" width="60" height="85" fill="white" />
-                        <rect x="260" y="50" width="50" height="70" fill="white" />
-                        <rect x="320" y="65" width="30" height="55" fill="white" />
-                      </svg>
-                    </div>
-
+                  {/* Image Carousel */}
+                  <div className="relative">
+                    <CardCarousel
+                      images={project.images}
+                      onImageClick={(idx) => setLightbox({ images: project.images, index: idx })}
+                    />
                     {/* Category badge */}
-                    <div className="absolute top-4 left-4 bg-white/10 border border-white/20 backdrop-blur-sm">
+                    <div className="absolute top-4 left-4 bg-black/50 border border-white/20 backdrop-blur-sm z-10 pointer-events-none">
                       <span className="text-white text-xs font-semibold tracking-widest px-3 py-1 block uppercase">
                         {project.type}
                       </span>
                     </div>
-
                     {/* Status badge */}
-                    <div className={`absolute top-4 right-4 text-xs font-bold tracking-widest px-3 py-1
-                      ${project.status === 'Completed'
-                        ? 'bg-green-500 text-white'
-                        : 'bg-yellow-400 text-navy'
-                      }`}>
+                    <div className={`absolute top-4 right-4 text-xs font-bold tracking-widest px-3 py-1 z-10 pointer-events-none
+                      ${project.status === 'Completed' ? 'bg-green-500 text-white' : 'bg-yellow-400 text-navy'}`}>
                       {project.status.toUpperCase()}
                     </div>
                   </div>
@@ -254,7 +375,6 @@ export default function Projects() {
                     <h3 className="text-navy font-bold text-xl mb-4 group-hover:text-sapphire transition-colors leading-tight">
                       {project.name}
                     </h3>
-
                     <div className="space-y-2 mb-4">
                       <div className="flex items-start gap-2">
                         <MapPin size={13} className="text-sapphire shrink-0 mt-0.5" />
@@ -269,7 +389,6 @@ export default function Projects() {
                         <span className="text-gray-500 text-sm">{project.scope}</span>
                       </div>
                     </div>
-
                     <div className="pt-4 border-t border-iceblue-dark">
                       <Link
                         to="/contact"
@@ -310,6 +429,15 @@ export default function Projects() {
           </FadeUpSimple>
         </div>
       </section>
+
+      {/* ── LIGHTBOX PORTAL ── */}
+      {lightbox && (
+        <Lightbox
+          images={lightbox.images}
+          startIndex={lightbox.index}
+          onClose={() => setLightbox(null)}
+        />
+      )}
 
     </div>
   )

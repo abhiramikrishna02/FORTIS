@@ -31,8 +31,6 @@ export default function Navbar() {
 
   return (
     <>
-      
-
       {/* Main Navbar */}
       <motion.nav
         initial={{ y: -80 }}
@@ -47,21 +45,18 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-3 group">
-              <div className="flex items-center gap-3">
-                {/* SVG Logo mark */}
-                <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <polygon points="22,2 42,38 2,38" fill="none" stroke="#002A6A" strokeWidth="3.5" />
-                  <polygon points="22,10 36,34 8,34" fill="#0F52BA" opacity="0.15" />
-                  <line x1="22" y1="10" x2="22" y2="34" stroke="#002A6A" strokeWidth="2" />
-                  <line x1="14" y1="34" x2="30" y2="34" stroke="#0F52BA" strokeWidth="2.5" />
-                </svg>
-                <div>
-                  <div className="font-black text-navy text-xl tracking-widest leading-none">FORTIS</div>
-                  <div className="text-sapphire font-medium text-xs tracking-widest leading-tight">BUILDERS AND DEVELOPERS</div>
-                </div>
-              </div>
-            </Link>
+            {/* Logo */}
+<Link to="/" className="flex items-center gap-3 group">
+  <img
+    src="/LOGO.png"
+    alt="Fortis Builders and Developers"
+    className="h-12 sm:h-14 w-auto object-contain"
+  />
+  <div>
+    <div className="font-black text-navy text-xl tracking-widest leading-none">FORTIS</div>
+    <div className="text-sapphire font-medium text-xs tracking-widest leading-tight">BUILDERS AND DEVELOPERS</div>
+  </div>
+</Link>
 
             {/* Desktop Links */}
             <div className="hidden md:flex items-center gap-8">

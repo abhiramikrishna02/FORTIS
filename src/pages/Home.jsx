@@ -131,100 +131,94 @@ export default function Home() {
   return (
     <div className="overflow-x-hidden">
 
-      {/* ── HERO ── */}
-      <section className="relative min-h-[92vh] flex items-center bg-navy overflow-hidden">
-        {/* Background pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-sapphire"
-            style={{ clipPath: 'polygon(30% 0%, 100% 0%, 100% 100%, 0% 100%)' }} />
-        </div>
-        {/* Geometric accent */}
-        <div className="absolute right-0 top-0 bottom-0 w-2/5 hidden lg:block overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-sapphire/20 to-navy" />
-          {/* Diagonal lines */}
-          <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="lines" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-                <line x1="0" y1="40" x2="40" y2="0" stroke="white" strokeWidth="1" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#lines)" />
-          </svg>
-          {/* Large triangle watermark */}
-          <svg className="absolute inset-0 w-full h-full opacity-5" viewBox="0 0 400 600" xmlns="http://www.w3.org/2000/svg">
-            <polygon points="200,20 380,550 20,550" fill="none" stroke="white" strokeWidth="4" />
-            <polygon points="200,80 330,490 70,490" fill="none" stroke="white" strokeWidth="2" />
-          </svg>
-        </div>
+     {/* ── HERO ── */}
+<section
+  className="relative min-h-[92vh] flex items-center overflow-hidden bg-cover bg-center bg-no-repeat"
+  style={{ backgroundImage: "url('/hero.png')" }}
+>
+  {/* Faded blue overlay - left heavy, fades to transparent */}
+  <div className="absolute inset-0 bg-gradient-to-r from-navy/70 via-navy/30 to-transparent" />
 
-        {/* Hero Content */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="max-w-3xl">
-            <motion.p
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-sapphire font-semibold tracking-widest text-xs uppercase mb-8 flex items-center gap-3"
-            >
-              <span className="w-8 h-px bg-sapphire" />
-              Headquartered in Karnataka | Serving Clients Across India
-            </motion.p>
+  {/* Hero Content - left aligned */}
+  <div className="relative z-10 w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-24">
+    <div className="max-w-3xl">
+      <motion.p
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6 }}
+        className="text-white font-semibold tracking-widest text-xs uppercase mb-8 flex items-center gap-3"
+        style={{ textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}
+      >
+        <span className="w-8 h-px bg-white/60" />
+        Headquartered in Karnataka | Serving Clients Across India
+      </motion.p>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="text-white font-black text-5xl sm:text-6xl lg:text-7xl xl:text-8xl leading-none tracking-tight mb-8 uppercase"
-            >
-              WHERE<br />
-              <span className="text-transparent" style={{ WebkitTextStroke: '2px #0F52BA' }}>
-                EVERY
-              </span><br />
-              DREAM<br />
-              <span className="text-sapphire">BEGINS.</span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              className="text-white/70 text-lg leading-relaxed mb-10 max-w-xl"
-            >
-              Transforming visions into enduring spaces through expert development,
-              construction, and interior fit-out solutions.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="flex flex-col sm:flex-row gap-4"
-            >
-              <Link to="/projects" className="btn-primary text-center">
-                VIEW PROJECTS
-              </Link>
-              <Link to="/contact" className="btn-outline text-center">
-                CONTACT US
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+      <motion.h1
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.1 }}
+        className="text-white font-black text-5xl sm:text-6xl lg:text-7xl xl:text-8xl leading-none tracking-tight mb-8 uppercase"
+        style={{ textShadow: '2px 2px 12px rgba(0,0,0,0.5)' }}
+      >
+        WHERE<br />
+        <span
+          style={{
+            WebkitTextStroke: '3px #ffffff',
+            color: 'transparent',
+            textShadow: 'none',
+            filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.3))',
+          }}
         >
-          <span className="text-white/40 text-xs tracking-widest">SCROLL</span>
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="w-px h-8 bg-gradient-to-b from-white/40 to-transparent"
-          />
-        </motion.div>
-      </section>
+          EVERY
+        </span><br />
+        DREAM<br />
+        <span style={{ color: '#5B9BF5', textShadow: '0 0 20px rgba(91,155,245,0.7), 2px 2px 8px rgba(0,0,0,0.6)' }}>
+          BEGINS.
+        </span>
+      </motion.h1>
+
+      <motion.p
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 0.3 }}
+        className="text-white text-lg leading-relaxed mb-10 max-w-xl"
+        style={{ textShadow: '0 1px 8px rgba(0,0,0,0.7)' }}
+      >
+        Transforming visions into enduring spaces through expert development,
+        construction, and interior fit-out solutions.
+      </motion.p>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.5 }}
+        className="flex flex-col sm:flex-row gap-4"
+      >
+        <Link to="/projects" className="btn-primary text-center">
+          VIEW PROJECTS
+        </Link>
+        <Link to="/contact" className="btn-outline text-center">
+          CONTACT US
+        </Link>
+      </motion.div>
+    </div>
+  </div>
+
+  {/* Scroll indicator */}
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ delay: 1.2 }}
+    className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+  >
+    <span className="text-white/40 text-xs tracking-widest">SCROLL</span>
+    <motion.div
+      animate={{ y: [0, 8, 0] }}
+      transition={{ duration: 1.5, repeat: Infinity }}
+      className="w-px h-8 bg-gradient-to-b from-white/40 to-transparent"
+    />
+  </motion.div>
+</section>
 
       {/* ── STATS STRIP ── */}
       <section className="bg-white border-b border-iceblue-dark py-0">
@@ -259,13 +253,12 @@ export default function Home() {
                 EXCELLENCE.
               </h2>
               <p className="text-gray-600 leading-relaxed mb-6">
-                FORTIS is a development, construction, and project management company delivering
-                residential, commercial, hospitality, retail, and mixed-use projects from concept to completion.
+                FORTIS delivers residential, commercial, hospitality, and mixed-use projects from
+                concept to completion — combining engineering precision, disciplined project
+                management, and a commitment to lasting value.
               </p>
               <p className="text-gray-600 leading-relaxed mb-8">
-                Beyond delivering structures, we build lasting partnerships — with clients, consultants,
-                and stakeholders — grounded in integrity, accountability, and a long-term commitment to
-                the built environment.
+                We don't just build structures; we build partnerships that last.
               </p>
               <Link to="/about" className="btn-outline-navy inline-flex items-center gap-2">
                 LEARN MORE ABOUT US <ArrowRight size={14} />

@@ -8,9 +8,10 @@ const services = [
   'Commercial Construction',
   'Interior Design & Fit-Out',
   'Renovation & Refurbishment',
-  'Turnkey Design & Build',
-  'Project Management',
-  'Design Coordination',
+  'Turnkey Design & Build Solutions',
+  'Real Estate Development',
+  'Project Management & Consultancy',
+  'Design Coordination & Procurement Management',
 ]
 
 const quickLinks = [
@@ -60,7 +61,7 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-white/60 text-sm leading-relaxed mb-6">
-              A trusted development, construction, interior fit-out, and project management company delivering high-quality projects through engineering excellence and disciplined execution.
+              A trusted development, construction, interior fit-out, and project management company delivering high-quality projects through engineering excellence, disciplined execution, and long-term value creation.
             </p>
             <div className="flex items-center gap-2 text-white/40 text-xs tracking-wider">
               <MapPin size={12} />
@@ -114,10 +115,10 @@ export default function Footer() {
               <div className="flex gap-3">
                 <MapPin size={16} className="text-sapphire shrink-0 mt-1" />
                 <p className="text-white/60 text-sm leading-relaxed">
-                  Total Mall, opposite Madiwala Police Station,<br />
+                  Total Mall, Police Station, opposite to Madiwala,<br />
                   Sidharata Colony, Santhosapuram,<br />
-                  Koramangala 2nd Block, Bengaluru,<br />
-                  Karnataka 560068
+                  Koramangala 2nd Block, Koramangala,<br />
+                  Bengaluru, Karnataka 560068
                 </p>
               </div>
               <div className="flex items-center gap-3">
