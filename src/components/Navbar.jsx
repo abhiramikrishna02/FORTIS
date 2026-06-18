@@ -31,21 +31,7 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Top bar */}
-      <div className="bg-navy text-white py-2 px-4 hidden md:block">
-        <div className="max-w-7xl mx-auto flex justify-between items-center text-xs tracking-wider">
-          <span className="text-iceblue font-medium">FORTIS BUILDERS AND DEVELOPERS PRIVATE LIMITED</span>
-          <div className="flex items-center gap-6">
-            <a href="tel:8971817700" className="flex items-center gap-2 hover:text-sapphire transition-colors">
-              <Phone size={12} />
-              <span>+91 89718 17700</span>
-            </a>
-            <a href="mailto:info@fortisbuilders.in" className="hover:text-sapphire transition-colors">
-              info@fortisbuilders.in
-            </a>
-          </div>
-        </div>
-      </div>
+      
 
       {/* Main Navbar */}
       <motion.nav
