@@ -147,16 +147,18 @@ function CardCarousel({ images, onImageClick }) {
         />
       </AnimatePresence>
 
-      {/* Arrows */}
+      {/* Arrows — always visible on mobile (sm and below), hover-only on desktop */}
       <button
         onClick={prev}
-        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 opacity-0 group-hover/carousel:opacity-100 transition-opacity z-10"
+        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 transition-opacity z-10
+          opacity-100 sm:opacity-0 sm:group-hover/carousel:opacity-100"
       >
         <ChevronLeft size={18} />
       </button>
       <button
         onClick={next}
-        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 opacity-0 group-hover/carousel:opacity-100 transition-opacity z-10"
+        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 transition-opacity z-10
+          opacity-100 sm:opacity-0 sm:group-hover/carousel:opacity-100"
       >
         <ChevronRight size={18} />
       </button>
