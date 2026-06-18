@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useInView, useAnimation } from 'framer-motion'
+import { motion, useInView, useAnimation, AnimatePresence } from 'framer-motion'
 import {
   CheckCircle, Award, Users, TrendingUp, ArrowRight,
-  Building2, Home as HomeIcon, Hotel, Wrench, Layers, ClipboardList
+  Building2, Home as HomeIcon, Hotel, Wrench, Layers, ClipboardList,
+  ChevronLeft, ChevronRight, X
 } from 'lucide-react'
 
 /* ─── Animation Helpers ──────────────────────────────────────────── */
@@ -47,6 +48,143 @@ function Counter({ end, suffix = '', prefix = '' }) {
   }, [inView, end])
 
   return <span ref={ref}>{prefix}{count}{suffix}</span>
+}
+
+/* ─── Featured Card Carousel ─────────────────────────────────────── */
+function FeaturedCardCarousel({ images, onImageClick }) {
+  const [current, setCurrent] = useState(0)
+
+  const prev = (e) => {
+    e.stopPropagation()
+    setCurrent((c) => (c - 1 + images.length) % images.length)
+  }
+  const next = (e) => {
+    e.stopPropagation()
+    setCurrent((c) => (c + 1) % images.length)
+  }
+
+  return (
+    <div
+      className="relative h-56 overflow-hidden cursor-pointer group/carousel"
+      onClick={() => onImageClick(current)}
+    >
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={current}
+          src={images[current]}
+          alt=""
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="w-full h-full object-cover"
+        />
+      </AnimatePresence>
+
+      <button
+        onClick={prev}
+        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 opacity-0 group-hover/carousel:opacity-100 transition-opacity z-10"
+      >
+        <ChevronLeft size={18} />
+      </button>
+      <button
+        onClick={next}
+        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 opacity-0 group-hover/carousel:opacity-100 transition-opacity z-10"
+      >
+        <ChevronRight size={18} />
+      </button>
+
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+        {images.map((_, i) => (
+          <button
+            key={i}
+            onClick={(e) => { e.stopPropagation(); setCurrent(i) }}
+            className={`h-1.5 rounded-full transition-all ${i === current ? 'bg-white w-3' : 'bg-white/50 w-1.5'}`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/* ─── Featured Lightbox ──────────────────────────────────────────── */
+function FeaturedLightbox({ images, startIndex, onClose }) {
+  const [current, setCurrent] = useState(startIndex)
+
+  const prev = () => setCurrent((c) => (c - 1 + images.length) % images.length)
+  const next = () => setCurrent((c) => (c + 1) % images.length)
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    const handler = (e) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowLeft') prev()
+      if (e.key === 'ArrowRight') next()
+    }
+    window.addEventListener('keydown', handler)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', handler)
+    }
+  }, [current])
+
+  return (
+    <div
+      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/90"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-4xl mx-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute -top-12 right-0 text-white/70 hover:text-white transition-colors z-10"
+        >
+          <X size={32} />
+        </button>
+
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={current}
+            src={images[current]}
+            alt=""
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ duration: 0.25 }}
+            className="w-full max-h-[78vh] object-contain rounded-lg"
+          />
+        </AnimatePresence>
+
+        <button
+          onClick={prev}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-14 bg-white/15 hover:bg-white/30 text-white rounded-full p-3 transition-colors"
+        >
+          <ChevronLeft size={26} />
+        </button>
+        <button
+          onClick={next}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-14 bg-white/15 hover:bg-white/30 text-white rounded-full p-3 transition-colors"
+        >
+          <ChevronRight size={26} />
+        </button>
+
+        <div className="flex flex-col items-center gap-2 mt-4">
+          <div className="flex gap-2">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrent(i)}
+                className={`h-1.5 rounded-full transition-all ${i === current ? 'bg-white w-6' : 'bg-white/40 w-1.5'}`}
+              />
+            ))}
+          </div>
+          <p className="text-white/40 text-xs tracking-widest">{current + 1} / {images.length}</p>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 /* ─── Data ───────────────────────────────────────────────────────── */
@@ -106,7 +244,7 @@ const featuredProjects = [
     location: 'Koramangala, Bengaluru',
     status: 'Completed',
     year: '2024',
-    color: 'bg-navy',
+    images: ['/hero.png', '/img.jpg', '/hero.png'],
   },
   {
     name: 'Vertex Commercial Park',
@@ -114,7 +252,7 @@ const featuredProjects = [
     location: 'Whitefield, Bengaluru',
     status: 'Completed',
     year: '2023',
-    color: 'bg-sapphire',
+    images: ['/hero.png', '/img.jpg', '/hero.png'],
   },
   {
     name: 'Azure Interior Fit-Out',
@@ -122,103 +260,90 @@ const featuredProjects = [
     location: 'Indiranagar, Bengaluru',
     status: 'Ongoing',
     year: '2025',
-    color: 'bg-navy',
+    images: ['/hero.png', '/img.jpg', '/hero.png'],
   },
 ]
 
 /* ─── Component ─────────────────────────────────────────────────── */
 export default function Home() {
+  const [featuredLightbox, setFeaturedLightbox] = useState(null)
+
   return (
     <div className="overflow-x-hidden">
 
-     {/* ── HERO ── */}
-<section
-  className="relative min-h-[92vh] flex items-center overflow-hidden bg-cover bg-center bg-no-repeat"
-  style={{ backgroundImage: "url('/hero.png')" }}
->
-  {/* Faded blue overlay - left heavy, fades to transparent */}
-  <div className="absolute inset-0 bg-gradient-to-r from-navy/70 via-navy/30 to-transparent" />
-
-  {/* Hero Content - left aligned */}
-  <div className="relative z-10 w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-24">
-    <div className="max-w-3xl">
-      <motion.p
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6 }}
-        className="text-white font-semibold tracking-widest text-xs uppercase mb-8 flex items-center gap-3"
-        style={{ textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}
+      {/* ── HERO ── */}
+      <section
+        className="relative min-h-[92vh] flex items-center overflow-hidden bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/hero.png')" }}
       >
-        <span className="w-8 h-px bg-white/60" />
-        Headquartered in Karnataka | Serving Clients Across India
-      </motion.p>
+        <div className="absolute inset-0 bg-gradient-to-r from-navy/70 via-navy/30 to-transparent" />
+        <div className="relative z-10 w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-24">
+          <div className="max-w-3xl">
+            <motion.p
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-white font-semibold tracking-widest text-xs uppercase mb-8 flex items-center gap-3"
+              style={{ textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}
+            >
+              <span className="w-8 h-px bg-white/60" />
+              Headquartered in Karnataka | Serving Clients Across India
+            </motion.p>
 
-      <motion.h1
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.1 }}
-        className="text-white font-black text-5xl sm:text-6xl lg:text-7xl xl:text-8xl leading-none tracking-tight mb-8 uppercase"
-        style={{ textShadow: '2px 2px 12px rgba(0,0,0,0.5)' }}
-      >
-        WHERE<br />
-        <span
-          style={{
-            WebkitTextStroke: '3px #ffffff',
-            color: 'transparent',
-            textShadow: 'none',
-            filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.3))',
-          }}
+            <motion.h1
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="text-white font-black text-5xl sm:text-6xl lg:text-7xl xl:text-8xl leading-none tracking-tight mb-8 uppercase"
+              style={{ textShadow: '2px 2px 12px rgba(0,0,0,0.5)' }}
+            >
+              WHERE<br />
+              <span style={{ WebkitTextStroke: '3px #ffffff', color: 'transparent', textShadow: 'none', filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.3))' }}>
+                EVERY
+              </span><br />
+              DREAM<br />
+              <span style={{ color: '#5B9BF5', textShadow: '0 0 20px rgba(91,155,245,0.7), 2px 2px 8px rgba(0,0,0,0.6)' }}>
+                BEGINS.
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="text-white text-lg leading-relaxed mb-10 max-w-xl"
+              style={{ textShadow: '0 1px 8px rgba(0,0,0,0.7)' }}
+            >
+              Transforming visions into enduring spaces through expert development,
+              construction, and interior fit-out solutions.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="flex flex-col sm:flex-row gap-4"
+            >
+              <Link to="/projects" className="btn-primary text-center">VIEW PROJECTS</Link>
+              <Link to="/contact" className="btn-outline text-center">CONTACT US</Link>
+            </motion.div>
+          </div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
         >
-          EVERY
-        </span><br />
-        DREAM<br />
-        <span style={{ color: '#5B9BF5', textShadow: '0 0 20px rgba(91,155,245,0.7), 2px 2px 8px rgba(0,0,0,0.6)' }}>
-          BEGINS.
-        </span>
-      </motion.h1>
-
-      <motion.p
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.3 }}
-        className="text-white text-lg leading-relaxed mb-10 max-w-xl"
-        style={{ textShadow: '0 1px 8px rgba(0,0,0,0.7)' }}
-      >
-        Transforming visions into enduring spaces through expert development,
-        construction, and interior fit-out solutions.
-      </motion.p>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.5 }}
-        className="flex flex-col sm:flex-row gap-4"
-      >
-        <Link to="/projects" className="btn-primary text-center">
-          VIEW PROJECTS
-        </Link>
-        <Link to="/contact" className="btn-outline text-center">
-          CONTACT US
-        </Link>
-      </motion.div>
-    </div>
-  </div>
-
-  {/* Scroll indicator */}
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ delay: 1.2 }}
-    className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-  >
-    <span className="text-white/40 text-xs tracking-widest">SCROLL</span>
-    <motion.div
-      animate={{ y: [0, 8, 0] }}
-      transition={{ duration: 1.5, repeat: Infinity }}
-      className="w-px h-8 bg-gradient-to-b from-white/40 to-transparent"
-    />
-  </motion.div>
-</section>
+          <span className="text-white/40 text-xs tracking-widest">SCROLL</span>
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="w-px h-8 bg-gradient-to-b from-white/40 to-transparent"
+          />
+        </motion.div>
+      </section>
 
       {/* ── STATS STRIP ── */}
       <section className="bg-white border-b border-iceblue-dark py-0">
@@ -267,13 +392,11 @@ export default function Home() {
 
             <FadeUp delay={0.2}>
               <div className="relative">
-                {/* Blueprint-style graphic */}
                 <div className="bg-iceblue p-10 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-sapphire/10"
                     style={{ clipPath: 'polygon(100% 0, 0 0, 100% 100%)' }} />
                   <div className="absolute bottom-0 left-0 w-24 h-24 bg-navy/5"
                     style={{ clipPath: 'polygon(0 100%, 0 0, 100% 100%)' }} />
-
                   <div className="space-y-6 relative z-10">
                     <div>
                       <p className="text-xs font-semibold tracking-widest text-sapphire uppercase mb-1">Our Core Mission</p>
@@ -299,8 +422,6 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-
-                {/* Floating accent block */}
                 <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-navy -z-10" />
               </div>
             </FadeUp>
@@ -314,27 +435,20 @@ export default function Home() {
           <FadeUp>
             <div className="max-w-2xl mb-16">
               <p className="section-label">02 // WHAT WE DO</p>
-              <h2 className="section-title">
-                End-to-End Construction & Development Services
-              </h2>
+              <h2 className="section-title">End-to-End Construction & Development Services</h2>
               <p className="section-body">
                 From concept to completion, we deliver a full spectrum of construction, development,
                 and project management services under one disciplined team.
               </p>
             </div>
           </FadeUp>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((svc, i) => (
               <FadeUp key={svc.title} delay={i * 0.1}>
                 <div className="bg-white p-8 group card-hover border border-iceblue-dark/30 relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-1 h-0 bg-sapphire group-hover:h-full transition-all duration-500" />
-                  <div className="text-sapphire mb-5 group-hover:text-navy transition-colors duration-300">
-                    {svc.icon}
-                  </div>
-                  <h3 className="text-navy font-bold text-lg mb-3 group-hover:text-sapphire transition-colors">
-                    {svc.title}
-                  </h3>
+                  <div className="text-sapphire mb-5 group-hover:text-navy transition-colors duration-300">{svc.icon}</div>
+                  <h3 className="text-navy font-bold text-lg mb-3 group-hover:text-sapphire transition-colors">{svc.title}</h3>
                   <p className="text-gray-500 text-sm leading-relaxed">{svc.desc}</p>
                 </div>
               </FadeUp>
@@ -362,43 +476,19 @@ export default function Home() {
             {featuredProjects.map((project, i) => (
               <FadeUp key={project.name} delay={i * 0.15}>
                 <div className="group relative overflow-hidden card-hover border border-iceblue-dark/30">
-                  {/* Project visual placeholder with brand gradient */}
-                  <div className={`h-56 ${project.color} relative overflow-hidden`}>
-                    <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent" />
-                    <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 400 300">
-                      <defs>
-                        <pattern id={`grid-${i}`} x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
-                          <path d="M 30 0 L 0 0 0 30" fill="none" stroke="white" strokeWidth="0.5"/>
-                        </pattern>
-                      </defs>
-                      <rect width="100%" height="100%" fill={`url(#grid-${i})`} />
-                    </svg>
-                    {/* Building silhouette */}
-                    <div className="absolute bottom-0 left-8 right-8">
-                      <svg viewBox="0 0 300 120" xmlns="http://www.w3.org/2000/svg" className="w-full opacity-20">
-                        <rect x="20" y="20" width="60" height="100" fill="white" />
-                        <rect x="90" y="0" width="80" height="120" fill="white" />
-                        <rect x="180" y="35" width="50" height="85" fill="white" />
-                        <rect x="240" y="50" width="40" height="70" fill="white" />
-                        <rect x="35" y="35" width="10" height="12" fill={i === 1 ? '#0F52BA' : '#002A6A'} opacity="0.4" />
-                        <rect x="55" y="35" width="10" height="12" fill={i === 1 ? '#0F52BA' : '#002A6A'} opacity="0.4" />
-                        <rect x="105" y="15" width="12" height="15" fill={i === 1 ? '#0F52BA' : '#002A6A'} opacity="0.4" />
-                        <rect x="130" y="15" width="12" height="15" fill={i === 1 ? '#0F52BA' : '#002A6A'} opacity="0.4" />
-                        <rect x="155" y="15" width="12" height="15" fill={i === 1 ? '#0F52BA' : '#002A6A'} opacity="0.4" />
-                      </svg>
-                    </div>
-                    {/* Status Badge */}
-                    <div className={`absolute top-4 right-4 text-xs font-bold tracking-widest px-3 py-1 ${
+                  <div className="relative">
+                    <FeaturedCardCarousel
+                      images={project.images}
+                      onImageClick={(idx) => setFeaturedLightbox({ images: project.images, index: idx })}
+                    />
+                    <div className={`absolute top-4 right-4 text-xs font-bold tracking-widest px-3 py-1 z-10 pointer-events-none ${
                       project.status === 'Completed' ? 'bg-green-500 text-white' : 'bg-yellow-400 text-navy'
                     }`}>
                       {project.status.toUpperCase()}
                     </div>
                   </div>
-
                   <div className="p-6 bg-white">
-                    <p className="text-xs font-semibold tracking-widest text-sapphire uppercase mb-2">
-                      {project.type}
-                    </p>
+                    <p className="text-xs font-semibold tracking-widest text-sapphire uppercase mb-2">{project.type}</p>
                     <h3 className="text-navy font-bold text-xl mb-1">{project.name}</h3>
                     <p className="text-gray-400 text-sm">{project.location} · {project.year}</p>
                   </div>
@@ -409,9 +499,17 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Lightbox */}
+      {featuredLightbox && (
+        <FeaturedLightbox
+          images={featuredLightbox.images}
+          startIndex={featuredLightbox.index}
+          onClose={() => setFeaturedLightbox(null)}
+        />
+      )}
+
       {/* ── WHY CHOOSE FORTIS ── */}
       <section className="py-24 bg-navy relative overflow-hidden">
-        {/* Background pattern */}
         <svg className="absolute inset-0 w-full h-full opacity-5" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="why-pattern" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
@@ -420,30 +518,22 @@ export default function Home() {
           </defs>
           <rect width="100%" height="100%" fill="url(#why-pattern)" />
         </svg>
-
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeUp>
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <p className="text-sapphire font-semibold tracking-widest text-xs uppercase mb-3">
-                04 // WHY CHOOSE US
-              </p>
-              <h2 className="section-title-white">
-                The FORTIS Difference
-              </h2>
+              <p className="text-sapphire font-semibold tracking-widest text-xs uppercase mb-3">04 // WHY CHOOSE US</p>
+              <h2 className="section-title-white">The FORTIS Difference</h2>
               <p className="text-white/60 leading-relaxed">
                 We bring together engineering discipline, project management expertise, and a
                 relentless commitment to quality on every project we undertake.
               </p>
             </div>
           </FadeUp>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {whyChoose.map((item, i) => (
               <FadeUp key={item.title} delay={i * 0.1}>
                 <div className="border border-white/10 p-8 hover:border-sapphire hover:bg-sapphire/5 transition-all duration-300 group">
-                  <div className="text-sapphire mb-5 group-hover:scale-110 transition-transform duration-300">
-                    {item.icon}
-                  </div>
+                  <div className="text-sapphire mb-5 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
                   <h3 className="text-white font-bold text-lg mb-3">{item.title}</h3>
                   <p className="text-white/60 text-sm leading-relaxed">{item.desc}</p>
                 </div>
@@ -467,9 +557,7 @@ export default function Home() {
               your project requirements and deliver exceptional outcomes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/contact" className="btn-primary">
-                GET IN TOUCH
-              </Link>
+              <Link to="/contact" className="btn-primary">GET IN TOUCH</Link>
               <Link to="/projects" className="btn-outline-navy flex items-center gap-2 justify-center">
                 SEE OUR PORTFOLIO <ArrowRight size={14} />
               </Link>
