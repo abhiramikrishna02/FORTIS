@@ -49,10 +49,13 @@ const contactInfo = [
   {
     icon: <Mail size={22} />,
     label: 'Email',
-    value: 'info@fortisbuilders.in',
-    link: 'mailto:info@fortisbuilders.in',
+    value: 'fortisbuildersoff@gmail.com',
+    link: 'mailto:fortisbuildersoff@gmail.com',
   },
 ]
+
+/* Destination inbox for inquiry submissions */
+const RECIPIENT_EMAIL = 'fortisbuildersoff@gmail.com'
 
 /* ─── Component ─────────────────────────────────────────────────── */
 export default function Contact() {
@@ -89,6 +92,30 @@ export default function Contact() {
     }
   }
 
+  /* Builds the email subject + body from form data and opens Gmail's
+     compose window (web) in a new tab, addressed to RECIPIENT_EMAIL,
+     pre-filled and ready for the user to hit Send. */
+  const openGmailCompose = (data) => {
+    const subject = `New Project Inquiry — ${data.service} (${data.fullName})`
+
+    const body = [
+      `Full Name: ${data.fullName}`,
+      `Phone Number: ${data.phone}`,
+      `Email Address: ${data.email}`,
+      `Company Name: ${data.company ? data.company : '—'}`,
+      `Service Required: ${data.service}`,
+      '',
+      'Message:',
+      data.message,
+    ].join('\n')
+
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+      RECIPIENT_EMAIL
+    )}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+
+    window.open(gmailUrl, '_blank', 'noopener,noreferrer')
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     const validationErrors = validate()
@@ -96,7 +123,8 @@ export default function Contact() {
       setErrors(validationErrors)
       return
     }
-    // In production: send to backend/email service
+    // Open Gmail compose, pre-filled with the submitted inquiry details
+    openGmailCompose(formData)
     setSubmitted(true)
   }
 
@@ -322,7 +350,7 @@ export default function Contact() {
                       </button>
 
                       <p className="text-gray-400 text-xs text-center">
-                        We respond within 1 business day. Your information is kept confidential.
+                        Submitting opens Gmail with your inquiry pre-filled — just hit Send. Your information is kept confidential.
                       </p>
                     </form>
                   </div>
@@ -338,11 +366,14 @@ export default function Contact() {
                       <CheckCircle size={32} className="text-white" />
                     </div>
                     <h3 className="text-white font-black text-3xl uppercase mb-4">
-                      Inquiry Received!
+                      Inquiry Ready to Send!
                     </h3>
-                    <p className="text-white/70 leading-relaxed max-w-sm mb-8">
-                      Thank you, <strong className="text-white">{formData.fullName}</strong>. Our team will review
-                      your inquiry and be in touch within one business day.
+                    <p className="text-white/70 leading-relaxed max-w-sm mb-2">
+                      Thank you, <strong className="text-white">{formData.fullName}</strong>. We've opened Gmail
+                      in a new tab with your inquiry pre-filled.
+                    </p>
+                    <p className="text-white/50 text-sm leading-relaxed max-w-sm mb-8">
+                      Didn't see a new tab? Please check your pop-up blocker, then just hit <strong className="text-white">Send</strong> in Gmail to complete your inquiry.
                     </p>
                     <button
                       onClick={() => {
