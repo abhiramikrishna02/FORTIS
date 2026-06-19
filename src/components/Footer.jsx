@@ -48,16 +48,11 @@ export default function Footer() {
 
           {/* Brand Column */}
           <div className="lg:col-span-1">
-            <Link to="/" className="flex items-center gap-3 mb-6">
-              <svg width="40" height="40" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="22,2 42,38 2,38" fill="none" stroke="white" strokeWidth="3.5" />
-                <polygon points="22,10 36,34 8,34" fill="white" opacity="0.1" />
-                <line x1="22" y1="10" x2="22" y2="34" stroke="white" strokeWidth="2" />
-                <line x1="14" y1="34" x2="30" y2="34" stroke="#0F52BA" strokeWidth="2.5" />
-              </svg>
+            <Link to="/" className="flex items-center gap-3 mb-6 bg-white px-4 py-3 w-fit">
+              <img src="/LOGO.png" alt="FORTIS Builders and Developers" className="w-10 h-10 object-contain" />
               <div>
-                <div className="font-black text-white text-xl tracking-widest leading-none">FORTIS</div>
-                <div className="text-white/60 font-medium text-xs tracking-widest leading-tight">BUILDERS AND DEVELOPERS</div>
+                <div className="font-black text-navy text-xl tracking-widest leading-none">FORTIS</div>
+                <div className="text-navy/60 font-medium text-xs tracking-widest leading-tight">BUILDERS AND DEVELOPERS</div>
               </div>
             </Link>
             <p className="text-white/60 text-sm leading-relaxed mb-6">
